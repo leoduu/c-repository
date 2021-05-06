@@ -80,5 +80,13 @@ int main()
     printf("capacity: %d\n", v.capacity(&v));
 
     
+    v.reserve(&v);
+    printf("\nvector reserve\n");
+    for (int *it=v.begin(&v); it!=v.end(&v); it++) {
+        printf("%d ", *it);
+    }
+    printf("\nsize:     %d\n", v.size(&v));
+    printf("capacity: %d\n", v.capacity(&v));
+
     return 0;
 }
