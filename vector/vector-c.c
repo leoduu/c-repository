@@ -1,11 +1,36 @@
 #include <stdio.h>
 #include "vector-c.h"
+#include <time.h>
 
 vector_impl(int)
 
-int main()
-{   
+void spend_time(void)
+{
+    clock_t t1, t2;
+    double t;
     vector_init(int, v, 5);
+
+    printf("\n---spend time test---\n");
+
+    t1 = clock();
+    for (u32 i=0; i<10000; i++) v.push_back(&v, i);
+    t2 = clock();
+    t = (double)(t2-t1) / CLOCKS_PER_SEC * 1000;
+    printf("push_back %.3lfms\n", t);
+
+
+    t1 = clock();
+    while (v.size(&v)) v.pop_back(&v);
+    t2 = clock();
+    t = (double)(t2-t1) / CLOCKS_PER_SEC * 1000;
+    printf("pop_back %.3lfms\n", t);
+
+}
+
+void operation_test(void)
+{
+    vector_init(int, v, 5);
+
     printf("vector init\n");
     printf("size:     %d\n", v.size(&v));
     printf("capacity: %d\n", v.capacity(&v));
@@ -87,6 +112,13 @@ int main()
     }
     printf("\nsize:     %d\n", v.size(&v));
     printf("capacity: %d\n", v.capacity(&v));
+}
+
+int main()
+{   
+    //operation_test();
+
+    spend_time();
 
     return 0;
 }

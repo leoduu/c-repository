@@ -54,31 +54,31 @@ typedef struct _node(T) {                                       \
     void (*reserve)  (struct _node(T) *);                       \
 } _vec(T);                                                      \
                                                                 \
-T _front(T)(_vec(T) *this) {                                    \
+static inline T _front(T)(_vec(T) *this) {                      \
     return *(this->start);                                      \
 }                                                               \
                                                                 \
-T _back(T)(_vec(T) *this) {                                     \
+static inline T _back(T)(_vec(T) *this) {                       \
     return *(this->finish);                                     \
 }                                                               \
                                                                 \
-T _at(T)(_vec(T) *this, u32 n) {                                \
+static inline T _at(T)(_vec(T) *this, u32 n) {                  \
     return *(this->start + n);                                  \
 }                                                               \
                                                                 \
-T *_begin(T)(_vec(T) *this) {                                   \
+static inline T *_begin(T)(_vec(T) *this) {                     \
     return this->start;                                         \
 }                                                               \
                                                                 \
-T *_end(T)(_vec(T) *this) {                                     \
+static inline T *_end(T)(_vec(T) *this) {                       \
     return this->finish;                                        \
 }                                                               \
                                                                 \
-u32 _size(T)(_vec(T) *this) {                                   \
+static inline u32 _size(T)(_vec(T) *this) {                     \
     return this->finish - this->start;                          \
 }                                                               \
                                                                 \
-u32 _capacity(T)(_vec(T) *this) {                               \
+static inline u32 _capacity(T)(_vec(T) *this) {                 \
     return this->_capacity;                                     \
 }                                                               \
                                                                 \
@@ -94,7 +94,7 @@ void _push_back(T)(_vec(T) *this, T value) {                    \
     *(this->finish++) = value;                                  \
 }                                                               \
                                                                 \
-void _pop_back(T)(_vec(T) *this) {                              \
+static inline void _pop_back(T)(_vec(T) *this) {                \
     if (this->finish > this->start)                             \
         this->finish--;                                         \
 }                                                               \
@@ -124,7 +124,7 @@ T *_erase(T)(_vec(T) *this, T *pos) {                           \
     return pos;                                                 \
 }                                                               \
                                                                 \
-void _clear(T)(_vec(T) *this) {                                 \
+static inline void _clear(T)(_vec(T) *this) {                   \
     this->finish = this->start;                                 \
 }                                                               \
                                                                 \
