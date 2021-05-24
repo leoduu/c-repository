@@ -6,8 +6,11 @@ project(std-c)
 # include directory
 include_directories(${PROJECT_SOURCE_DIR}/template)
 include_directories(${PROJECT_SOURCE_DIR}/vector)
+include_directories(${PROJECT_SOURCE_DIR}/overload)
+include_directories(${PROJECT_SOURCE_DIR}/rbtree)
 
 # add executable file
-add_executable(vector-c   ${PROJECT_SOURCE_DIR}/vector/vector-c.c)
-add_executable(template-c ${PROJECT_SOURCE_DIR}/template/template-c.c)
-add_executable(overload-c ${PROJECT_SOURCE_DIR}/overload/overload.c)
+add_executable(vector   ${PROJECT_SOURCE_DIR}/vector/vector.c)
+add_executable(template ${PROJECT_SOURCE_DIR}/template/template.c)
+add_executable(overload ${PROJECT_SOURCE_DIR}/overload/overload.c)
+add_executable(rbtree ${PROJECT_SOURCE_DIR}/rbtree/rbtree.c)

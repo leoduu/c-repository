@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "template-c.h"
+#include "template.h"
 
 max_impl(char)
 max_impl(int)

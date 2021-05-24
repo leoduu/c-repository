@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "vector-c.h"
+#include "vector.h"
 #include <time.h>
 
 vector_impl(int)

@@ -82,16 +82,12 @@ void my_open(const char *path, int flag, ...)
     
     va_start(va_ptr, flag);
 
-    RGB_t rgb;
+    mode = va_arg(va_ptr, int);
 
-    rgb = va_arg(va_ptr, RGB_t);
-
-    printf("%d %d %d\n", rgb.r, rgb.g, rgb.b);
-
-    // if (mode>=0 && mode <10)
-    //     printf("open with mode:%d\n", mode);
-    // else 
-    //     printf("open without mode\n");
+    if (mode>=0 && mode <10)
+        printf("open with mode:%d\n", mode);
+    else 
+        printf("open without mode\n");
 
     va_end(va_ptr);
 }
@@ -101,43 +97,43 @@ void my_open(const char *path, int flag, ...)
  
 void gcc_overload_int(int a)
 {
-    printf("get int: %d\n", a);
+    printf("overload_int: %d\n", a);
 }
  
 void gcc_overload_str(char *a)
 {
     
-    printf("get string: %s\n", a);
+    printf("overload_char[]: %s\n", a);
 }
  
 // warning: dereferencing type-punned pointer will break strict-aliasing rules
 #define gcc_overload(A)\
     __builtin_choose_expr(__builtin_types_compatible_p(typeof(A), int),\
         gcc_overload_int((int)A),\
-    __builtin_choose_expr(__builtin_types_compatible_p(typeof(A), char *),\
-        gcc_overload_str((char*)A),(void)0))
+    __builtin_choose_expr(__builtin_types_compatible_p(typeof(A), char[]),\
+        gcc_overload_str((char*)A),\
+    (void)0))
 
 
 
 int main()
 {
 
-    // my_printf("123 %s %c %d %x\n", "test", 'c', 49, 200);
-    
-    RGB_t rgb={100, 200, 250};
+    my_printf("123 %s %c %d %x\n\n", "test", 'c', 49, 200);
 
-    // my_open("./test", 1);
-    printf("in main %p\n", &rgb);
-    my_open("./test", 1, rgb);
+    int c = 11;
+    typeof(c) d;
 
-    // int a;
-    // char *b;
-    // a = 11;
-    // b = "hello world";
+    my_open("./test", 1);
+    my_open("./test", 1, 2);
 
-    // gcc_overload(a);
-    // gcc_overload(b);
+    printf("\n");
+    int a = 11;
+    char b[] = "hello world";
 
+    gcc_overload(a);
+    gcc_overload(b);
+ 
     return 0;
 }
 
