@@ -113,12 +113,13 @@ static void rbt_rotate_left(RBTree *rbt, TreeNode *node)
     TreeNode *rnode = node->right;
     // 修改节点，进行旋转
     node->right   = rnode->left;
+    rnode->left->parent = node;
     rnode->left   = node;
     rnode->parent = node->parent;
     node->parent  = rnode;
 
     // 判断是否为根节点
-    if (rnode->parent == rbt->nil) {
+    if (node == rbt->root) {
         rbt->root = rnode;
         return;
     }
@@ -136,12 +137,13 @@ static void rbt_rotate_right(RBTree *rbt, TreeNode *node)
     TreeNode *lnode = node->left;
     // 修改节点信息，进行旋转
     node->left    = lnode->right;
+    lnode->right->parent = node;
     lnode->right  = node;
     lnode->parent = node->parent;
     node->parent  = lnode;
 
     // 判断是否为根节点
-    if (lnode->parent == rbt->nil) {
+    if (node == rbt->root) {
         rbt->root = lnode;
         return;
     }
@@ -173,7 +175,7 @@ static void rbt_insert_fixup(RBTree *rbt, TreeNode *node)
         uncle = (parent==gparent->left)?gparent->right:gparent->left;
 
         // case 1 父节点和叔父节点为红色，将他们重新着色为黑色
-        if (uncle && uncle->color == RBT_RED) {
+        if (uncle != rbt->nil && uncle->color == RBT_RED) {
             parent->color  = RBT_BLACK;
             uncle->color   = RBT_BLACK;
             gparent->color = RBT_RED;
@@ -221,7 +223,7 @@ void rbt_insert(RBTree *rbt, int val)
     // 如果是空树，申请一个节点作为根节点返回
     if (rbt->root == rbt->nil) {
         // 哨兵
-        rbt->nil = (TreeNode *)malloc(sizeof(TreeNode));
+        rbt->nil  = (TreeNode *)malloc(sizeof(TreeNode));
         rbt_init(rbt, rbt->nil, rbt->nil, -1);
         rbt->nil->color = RBT_BLACK;
         // 根
@@ -265,37 +267,37 @@ void rbt_delete_fixup(RBTree *rbt, TreeNode *node)
     TreeNode *parent, *brother;
 
     // 修复
-    while (node != rbt->root && node->color == RBT_BLACK) {
+    while (node && node != rbt->root && node->color == RBT_BLACK) {
         parent = node->parent;
         // 当前节点为左子节点
         if (node == parent->left) {
             // 获取兄弟节点
             brother = parent->right;
-            if (brother == rbt->nil) continue;
-            // case 1 兄弟节点是红的，对父节点进行左旋
-            if (brother && brother->color == RBT_RED) {
+            // case 1 兄弟节点是红的
+            if (brother != rbt->nil && brother->color == RBT_RED) {
                 brother->color = RBT_BLACK;
                 parent->color  = RBT_RED;
                 rbt_rotate_left(rbt, parent);
                 brother = parent->right;
             }
-            // case 2 兄弟节点为黑色，左右子节点都是黑的，当前节点变红
+            // case 2 兄弟节点为黑色，左右子节点都是黑的
             else if (brother->left->color == RBT_BLACK && brother->right->color == RBT_BLACK) {
                 brother->color = RBT_RED;
                 node = parent;
+                parent = node->parent;
             }
-            // case 3 兄弟节点为黑色，右子节点是黑色，
-            else if (brother->right->color == RBT_BLACK) {
-                brother->color = RBT_RED;
-                brother->left->color = RBT_BLACK;
-                rbt_rotate_right(rbt, brother);
-                brother = node->parent->right;        
-            }
-            // case 4 兄弟节点为黑色，右子节点为红色
             else {
+                // case 3 兄弟节点为黑色，左子节点是红色的，右子节点是黑色，
+                if (brother->right->color == RBT_BLACK) {
+                    brother->color = RBT_RED;
+                    brother->left->color = RBT_BLACK;
+                    rbt_rotate_right(rbt, brother);
+                    brother = parent->right;        
+                }
+                // case 4 兄弟节点为黑色，右子节点为红色
                 brother->color = parent->color;
-                parent->color  = RBT_BLACK;
                 brother->right->color = RBT_BLACK;
+                parent->color  = RBT_BLACK;
                 rbt_rotate_left(rbt, parent);
                 node = rbt->root;
             }
@@ -306,33 +308,34 @@ void rbt_delete_fixup(RBTree *rbt, TreeNode *node)
             brother = parent->left;
             // case 1 兄弟节点是红的，对父节点进行左旋
             if (brother->color == RBT_RED) {
-                node->color   = RBT_BLACK;
+                brother->color   = RBT_BLACK;
                 parent->color = RBT_RED;
-                rbt_rotate_left(rbt, parent);
-                node = parent->left;
+                rbt_rotate_right(rbt, parent);
+                brother = parent->left;
             }
             // case 2 兄弟节点为黑色，左右子节点都是黑的，当前节点变红
             else if (brother->right->color == RBT_BLACK && brother->left->color == RBT_BLACK) {
                 brother->color = RBT_RED;
                 node = parent;
             }
-            // case 3 兄弟节点为黑色，右子节点是黑色，
-            else if (brother->left == RBT_BLACK) {
-                brother->color = RBT_RED;
-                brother->right->color = RBT_BLACK;
-                rbt_rotate_left(rbt, brother);
-                brother = node->parent->left;        
-            }
-            // case 4 兄弟节点为黑色，左子节点为红色
             else {
+                // case 3 兄弟节点为黑色，右子节点是红色，左子节点是黑色
+                if (brother->left == RBT_BLACK) {
+                    brother->color = RBT_RED;
+                    brother->right->color = RBT_BLACK;
+                    rbt_rotate_left(rbt, brother);
+                    brother = parent->left;    
+                }    
+                // case 4 兄弟节点为黑色，左子节点为红色
                 brother->color = parent->color;
+                brother->left->color = RBT_BLACK;
                 parent->color  = RBT_BLACK;
-                node->left->color = RBT_BLACK;
                 rbt_rotate_right(rbt, parent);
                 node = rbt->root;
             }
         }
     }
+    // 当前节点变黑
     node->color = RBT_BLACK;
 }
 
@@ -366,8 +369,9 @@ void rbt_delete(RBTree *rbt, int val)
                 fix   = replace->right;
                 color = replace->color;
                 // 判断最左子节点是否为当前节点的右子节点
-                if (replace->parent == node) {
+                if (node->right == replace) {
                     // 有可能是 nil
+                    // fix = replace->left;
                     fix->parent = replace;
                 } else {
                     // 将最左子节点的右子节点接到其父节点的左子节点处
@@ -392,6 +396,7 @@ void rbt_delete(RBTree *rbt, int val)
                 // case 4 如果当前的节点没有子节点，只需要删除此节点 
                 else {
                     replace = rbt->nil;
+                    rbt->nil->parent = node->parent;
                 }
                 // 记录待修正的节点和待删除节点的颜色
                 fix   = replace;
@@ -413,11 +418,13 @@ void rbt_delete(RBTree *rbt, int val)
             }
 
             // 黑色节点需要修复，红色不需要
-            // printf("\nbefore fix"); rbt_show(rbt);
+            // printf("\nbefore fix"); 
+            // rbt_show(rbt);            
+            // printf("\nafter fix");
+
             if (color == RBT_BLACK) {
                 rbt_delete_fixup(rbt, fix);
             }
-            // printf("\nafter fix");
 
             // 删除节点
             free(node);           
@@ -434,30 +441,35 @@ int main()
     RBTree n = {NULL};
     int mode=1;
     char str[20] = "\ninput: ";
-    int in[]  = {41,38,31,12,19,8};
-    int del[] = {8,12,19,31,38,41};
+    int in[]  = {1,2,3,4,5,5,6,7,8,9,0};
+    int del[] = {1,2,3,4,5,6,7,8,9,0};
+    int a[100];
 
-    for (int i=0; i<sizeof(in)/sizeof(in[0]); i++) {
-        printf("\n---%d insert: %d", i, in[i]);
-        rbt_insert(&n, in[i]);
-        rbt_show(&n);
-    }    
-    printf("\n_________________________________");
-    printf("\n| | | | | | | | | | | | | | | | |\n");
-    for (int i=0; i<sizeof(del)/sizeof(del[0]); i++) {
-        printf("\n---%d delete: %d", i, del[i]);
-        rbt_delete(&n, del[i]);
-        rbt_show(&n);
-    }
-
-    // for (int i=0; i<20; i++) {
-    //     num = rand()%49;
-    //     printf("\n%d input: %d", i, num);
-    //     rbt_insert(&n, num);
-    //     // if (i>5 && i<21) 
-    //         rbt_show(&n);
+    // for (int i=0; i<sizeof(in)/sizeof(in[0]); i++) {
+    //     printf("\n---%d insert: %d", i, in[i]);
+    //     rbt_insert(&n, in[i]);
+    //     rbt_show(&n);
+    // }    
+    // printf("\n____________________________________________________\n");
+    // for (int i=0; i<sizeof(del)/sizeof(del[0]); i++) {
+    //     printf("\n---%d delete: %d", i, del[i]);
+    //     rbt_delete(&n, del[i]);
+    //     rbt_show(&n);
     // }
-    //rbt_show(&n);
+
+    for (int i=0; i<25; i++) {
+        a[i] = rand()%90+10;
+        printf("\n%d input: %d", i, a[i]);
+        rbt_insert(&n, a[i]);
+        // if (i>17 && i<21) 
+            rbt_show(&n);
+    }
+    for (int i=0; i<25; i++) {
+        printf("\n%d delete: %d", i, a[i]);
+        rbt_delete(&n, a[i]);
+        // if (i>11)
+            rbt_show(&n);
+    }
     
 //     while (1)
 //     {
