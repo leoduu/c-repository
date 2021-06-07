@@ -267,7 +267,7 @@ void rbt_delete_fixup(RBTree *rbt, TreeNode *node)
     TreeNode *parent, *brother;
 
     // 修复
-    while (node && node != rbt->root && node->color == RBT_BLACK) {
+    while (node != rbt->root && node->color == RBT_BLACK) {
         parent = node->parent;
         // 当前节点为左子节点
         if (node == parent->left) {
@@ -280,8 +280,8 @@ void rbt_delete_fixup(RBTree *rbt, TreeNode *node)
                 rbt_rotate_left(rbt, parent);
                 brother = parent->right;
             }
-            // case 2 兄弟节点为黑色，左右子节点都是黑的
-            else if (brother->left->color == RBT_BLACK && brother->right->color == RBT_BLACK) {
+            // case 2 兄弟节点为黑色，其左右子节点都是黑的
+            if (brother->left->color == RBT_BLACK && brother->right->color == RBT_BLACK) {
                 brother->color = RBT_RED;
                 node = parent;
                 parent = node->parent;
@@ -313,8 +313,8 @@ void rbt_delete_fixup(RBTree *rbt, TreeNode *node)
                 rbt_rotate_right(rbt, parent);
                 brother = parent->left;
             }
-            // case 2 兄弟节点为黑色，左右子节点都是黑的，当前节点变红
-            else if (brother->right->color == RBT_BLACK && brother->left->color == RBT_BLACK) {
+            // case 2 兄弟节点为黑色，其左右子节点都是黑的，当前节点变红
+            if (brother->right->color == RBT_BLACK && brother->left->color == RBT_BLACK) {
                 brother->color = RBT_RED;
                 node = parent;
             }

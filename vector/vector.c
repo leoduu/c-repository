@@ -4,7 +4,7 @@
 
 vector_impl(int)
 
-void spend_time(void)
+void spend_time_test(void)
 {
     clock_t t1, t2;
     double t;
@@ -114,11 +114,11 @@ void operation_test(void)
     printf("capacity: %d\n", v.capacity(&v));
 }
 
+
 int main()
 {   
-    //operation_test();
-
-    spend_time();
+    operation_test();
+    spend_time_test();
 
     return 0;
 }
