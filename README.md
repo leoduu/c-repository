@@ -1,2 +1,2 @@
-# std-c
-use C to simulate CPP
+# c-repository
+my C repository
