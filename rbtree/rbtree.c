@@ -3,6 +3,38 @@
 #include <string.h>
 #include <stdlib.h>
 
+void rbt_insert(RBTree *rbt, int val);
+void rbt_delete(RBTree *rbt, int val);
+void rbt_show(RBTree *rbt)；
+
+int main()
+{
+    int num;
+    RBTree n = {NULL};
+    int mode=1;
+    char str[20] = "\ninput: ";
+    int in[]  = {1,2,3,4,5,5,6,7,8,9,0};
+    int del[] = {1,2,3,4,5,6,7,8,9,0};
+    int a[100];
+
+    for (int i=0; i<25; i++) {
+        a[i] = rand()%90+10;
+        printf("\n%d input: %d", i, a[i]);
+        rbt_insert(&n, a[i]);
+        // if (i>17 && i<21) 
+            rbt_show(&n);
+    }
+
+    for (int i=0; i<25; i++) {
+        printf("\n%d delete: %d", i, a[i]);
+        rbt_delete(&n, a[i]);
+        // if (i>11)
+            rbt_show(&n);
+    }
+      
+}
+
+
 /*
  * 性质1 结点是红色或黑色。
  * 性质2 根结点是黑色。
@@ -20,8 +52,8 @@ typedef struct _TreeNode {
 } TreeNode;
 
 typedef struct {
-    TreeNode *root;
-    TreeNode *nil;
+    TreeNode *root;             // 根节点
+    TreeNode *nil;              // 哨兵节点
 } RBTree;
 
 
@@ -267,7 +299,7 @@ void rbt_delete_fixup(RBTree *rbt, TreeNode *node)
     TreeNode *parent, *brother;
 
     // 修复
-    while (node != rbt->root && node->color == RBT_BLACK) {
+    while ( node != rbt->root && node->color == RBT_BLACK) {
         parent = node->parent;
         // 当前节点为左子节点
         if (node == parent->left) {
@@ -287,7 +319,7 @@ void rbt_delete_fixup(RBTree *rbt, TreeNode *node)
                 parent = node->parent;
             }
             else {
-                // case 3 兄弟节点为黑色，左子节点是红色的，右子节点是黑色，
+                // case 3 兄弟节点为黑色，左子节点是红色的，右子节点是黑色
                 if (brother->right->color == RBT_BLACK) {
                     brother->color = RBT_RED;
                     brother->left->color = RBT_BLACK;
@@ -435,67 +467,4 @@ void rbt_delete(RBTree *rbt, int val)
     // 没有找到节点
 }
 
-int main()
-{
-    int num;
-    RBTree n = {NULL};
-    int mode=1;
-    char str[20] = "\ninput: ";
-    int in[]  = {1,2,3,4,5,5,6,7,8,9,0};
-    int del[] = {1,2,3,4,5,6,7,8,9,0};
-    int a[100];
 
-    // for (int i=0; i<sizeof(in)/sizeof(in[0]); i++) {
-    //     printf("\n---%d insert: %d", i, in[i]);
-    //     rbt_insert(&n, in[i]);
-    //     rbt_show(&n);
-    // }    
-    // printf("\n____________________________________________________\n");
-    // for (int i=0; i<sizeof(del)/sizeof(del[0]); i++) {
-    //     printf("\n---%d delete: %d", i, del[i]);
-    //     rbt_delete(&n, del[i]);
-    //     rbt_show(&n);
-    // }
-
-    for (int i=0; i<25; i++) {
-        a[i] = rand()%90+10;
-        printf("\n%d input: %d", i, a[i]);
-        rbt_insert(&n, a[i]);
-        // if (i>17 && i<21) 
-            rbt_show(&n);
-    }
-    for (int i=0; i<25; i++) {
-        printf("\n%d delete: %d", i, a[i]);
-        rbt_delete(&n, a[i]);
-        // if (i>11)
-            rbt_show(&n);
-    }
-    
-//     while (1)
-//     {
-//         printf("%s",str);
-//         scanf("%d", &num);
-//         switch (num) {
-//             case -1 :
-//                 mode = 1;
-//                 sprintf(str, "\ninput: ");
-//                 break;
-//             case -2 :
-//                 mode = 0;
-//                 sprintf(str, "\ndelete: ");
-//                 break;
-//             case -3 :
-//                 goto exit;
-//             default :
-//                 if (mode)
-//                     rbt_insert(&n, num);
-//                 else 
-//                     rbt_delete(&n, num);
-//                 break;
-//         }        
-
-//         rbt_show(n);
-//     }
-// exit: 
-//     printf("exit\n");    
-}
