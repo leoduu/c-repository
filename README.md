@@ -1,2 +1,1 @@
-# c-repository
-my C repository
+Something fun in C language
