@@ -25,4 +25,6 @@ int main()
         }
         printf("addr p1:%p  cnt:%d\n", p1.get(&p1), p1.use_count(&p1)); 
     }
+
+    return 0;
 }

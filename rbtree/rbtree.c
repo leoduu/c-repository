@@ -3,9 +3,35 @@
 #include <string.h>
 #include <stdlib.h>
 
+/*
+ * 性质1 结点是红色或黑色。
+ * 性质2 根结点是黑色。
+ * 性质3 所有叶子都是黑色。（叶子是rbt->nil结点）
+ * 性质4 如果一个节点是红色的，则它的子节点必须是黑色的。
+ * 性质5 每个节点到该节点的所有后代节点的简单路径上,包含相同数目的黑节点。
+ */ 
+
+typedef struct _TreeNode {
+    struct _TreeNode *parent;
+    struct _TreeNode *left;     // 比父节点小
+    struct _TreeNode *right;    // 比父节点大
+    int color;                  // 0 黑 1 红
+    int val;
+} TreeNode;
+
+typedef struct {
+    TreeNode *root;             // 根节点
+    TreeNode *nil;              // 哨兵节点
+} RBTree;
+
+
+#define RBT_RED     1
+#define RBT_BLACK   0
+
+
 void rbt_insert(RBTree *rbt, int val);
 void rbt_delete(RBTree *rbt, int val);
-void rbt_show(RBTree *rbt)；
+void rbt_show(RBTree *rbt);
 
 int main()
 {
@@ -33,32 +59,6 @@ int main()
     }
       
 }
-
-
-/*
- * 性质1 结点是红色或黑色。
- * 性质2 根结点是黑色。
- * 性质3 所有叶子都是黑色。（叶子是rbt->nil结点）
- * 性质4 如果一个节点是红色的，则它的子节点必须是黑色的。
- * 性质5 每个节点到该节点的所有后代节点的简单路径上,包含相同数目的黑节点。
- */ 
-
-typedef struct _TreeNode {
-    struct _TreeNode *parent;
-    struct _TreeNode *left;     // 比父节点小
-    struct _TreeNode *right;    // 比父节点大
-    int color;                  // 0 黑 1 红
-    int val;
-} TreeNode;
-
-typedef struct {
-    TreeNode *root;             // 根节点
-    TreeNode *nil;              // 哨兵节点
-} RBTree;
-
-
-#define RBT_RED     1
-#define RBT_BLACK   0
 
 static void __rbt_show(RBTree* rbt, TreeNode* parent, TreeNode* node, char *prefix) 
 {
