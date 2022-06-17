@@ -10,8 +10,8 @@ static void unique_ptr_free(void *ptr)
 {
     void **p = (void **)ptr;
     free(*p);
+    printf("ptr(%p) free\n", *p);
 }
-
 
 
 #define _sptr_free(T)   share_ptr_free_##T  
@@ -104,8 +104,10 @@ void _share_init(T)(struct _sptr(T) *this, struct _sptr(T) *p){ \
                                                                 \
 static void _sptr_free(T)(void *ptr) {                          \
     struct _pinfo(T) **p = (struct _pinfo(T) **)ptr;            \
-    printf("addr p :%p free\n", (*p)->ptr);                     \
-    if (--(*p)->cnt == 0) free(*p);                             \
+    if (--(*p)->cnt == 0) {                                     \
+        free(*p);                                               \
+        printf("ptr(%p) free\n", (*p)->ptr);                    \
+    }                                                           \
 }               
 
 #endif

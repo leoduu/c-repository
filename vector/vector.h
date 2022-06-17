@@ -84,7 +84,7 @@ static inline u32 _capacity(T)(struct _vec(T) *this) {          \
     return this->_capacity;                                     \
 }                                                               \
                                                                 \
-void _push_back(T)(struct _vec(T) *this, T value) {             \
+volatile void _push_back(T)(struct _vec(T) *this, T value) {             \
     u32 size = this->size(this);                                \
     if (size == this->_capacity) {                              \
         T* p = realloc(this->start,sizeof(T)*(size+_vec_add));  \
@@ -96,7 +96,7 @@ void _push_back(T)(struct _vec(T) *this, T value) {             \
     *(this->finish++) = value;                                  \
 }                                                               \
                                                                 \
-static inline void _pop_back(T)(struct _vec(T) *this) {         \
+volatile void _pop_back(T)(struct _vec(T) *this) {         \
     if (this->finish > this->start)                             \
         this->finish--;                                         \
 }                                                               \

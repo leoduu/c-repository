@@ -6,25 +6,24 @@ vector_impl(int)
 
 void spend_time_test(void)
 {
-    clock_t t1, t2;
-    double t;
+    struct timeval t1, t2;
+    double t_push, t_pop;
     vector_init(int, v, 5);
 
     printf("\n---spend time test---\n");
 
-    t1 = clock();
+    gettimeofday(&t1, NULL);
     for (u32 i=0; i<10000; i++) v.push_back(&v, i);
-    t2 = clock();
-    t = (double)(t2-t1) / CLOCKS_PER_SEC * 1000;
-    printf("push_back %.3lfms\n", t);
+    gettimeofday(&t2, NULL);
+    t_push = 1000 * (t2.tv_sec - t1.tv_sec) + ((t2.tv_usec - t1.tv_usec) / 1000.0);
 
-
-    t1 = clock();
+    gettimeofday(&t1, NULL);
     while (v.size(&v)) v.pop_back(&v);
-    t2 = clock();
-    t = (double)(t2-t1) / CLOCKS_PER_SEC * 1000;
-    printf("pop_back %.3lfms\n", t);
+    gettimeofday(&t2, NULL);
+    t_pop = 1000 * (t2.tv_sec - t1.tv_sec) + ((t2.tv_usec - t1.tv_usec) / 1000.0);
 
+    printf("push_back %.3lfms len:%d \n", t_push, v.size(&v));
+    printf("pop_back  %.3lfms\n", t_pop);
 }
 
 void operation_test(void)

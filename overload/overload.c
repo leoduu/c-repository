@@ -10,12 +10,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-typedef struct 
-{
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-} RGB_t;
 
 // printf 
 void my_printf(const char *fmt, ...)
